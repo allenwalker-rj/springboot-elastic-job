@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * zk 自动化配置
+ *
  * @author allen
  * @date 2020/5/30 16:01
  */

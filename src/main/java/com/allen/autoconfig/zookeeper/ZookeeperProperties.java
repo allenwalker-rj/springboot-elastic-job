@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * zk 配置属性类
+ *
  * @author allen
  * @date 2020/5/30 15:52
  */

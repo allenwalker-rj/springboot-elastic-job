@@ -6,6 +6,8 @@ import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * SimpleJob 简单任务测试
+ *
  * @author allen
  * @date 2020/5/30 16:38
  */

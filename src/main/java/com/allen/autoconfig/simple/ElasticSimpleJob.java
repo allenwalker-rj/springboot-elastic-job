@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 
 
 /**
+ * 开启 SimpleJob 简单任务
+ *
  * @author allen
  * @date 2020/5/30 16:55
  */

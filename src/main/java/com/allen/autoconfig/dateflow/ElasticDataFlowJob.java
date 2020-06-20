@@ -8,6 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 开启 DateFlowJob 流式任务
+ *
  * @author allen
  * @date 2020/5/30 17:46
  */

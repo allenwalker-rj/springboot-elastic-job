@@ -18,6 +18,8 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
+ * DateFlowJob 自动化配置
+ *
  * @author allen
  * @date 2020/5/30 16:58
  */
