@@ -33,24 +33,29 @@ public class DateFlowJobAutoConfig {
     private CoordinatorRegistryCenter zkCenter;
 
     @PostConstruct
-    public void initSimpleJob(){
+    public void initSimpleJob() {
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(ElasticDataFlowJob.class);
-        for (Map.Entry<String,Object> entry :beans.entrySet()){
+        for (Map.Entry<String, Object> entry : beans.entrySet()) {
             Object instance = entry.getValue();
             Class<?>[] interfaces = instance.getClass().getInterfaces();
-            for (Class<?> superInterface:interfaces){
-                if (superInterface == DataflowJob.class){
+            for (Class<?> superInterface : interfaces) {
+                if (superInterface == DataflowJob.class) {
                     ElasticDataFlowJob annotation = instance.getClass().getAnnotation(ElasticDataFlowJob.class);
                     String jobName = annotation.jobName();
                     String cron = annotation.cron();
                     int shardingTotalCount = annotation.shardingTotalCount();
                     boolean overwrite = annotation.overwrite();
                     boolean steamingProcess = annotation.steamingProcess();
-                    JobCoreConfiguration coreConfiguration = JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount).build();
-//                    JobTypeConfiguration typeConfiguration = new SimpleJobConfiguration(coreConfiguration,instance.getClass().getCanonicalName());
-                    JobTypeConfiguration typeConfiguration = new DataflowJobConfiguration(coreConfiguration,instance.getClass().getCanonicalName(),steamingProcess);
-                    LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(typeConfiguration).overwrite(overwrite).build();
-                    new JobScheduler(zkCenter,liteJobConfiguration).init();
+                    JobCoreConfiguration core =
+                            JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
+                                    .build();
+                    JobTypeConfiguration type =
+                            new DataflowJobConfiguration(core, instance.getClass().getCanonicalName(), steamingProcess);
+                    LiteJobConfiguration liteJob =
+                            LiteJobConfiguration.newBuilder(type)
+                                    .overwrite(overwrite)
+                                    .build();
+                    new JobScheduler(zkCenter, liteJob).init();
                 }
             }
         }

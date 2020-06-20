@@ -18,6 +18,8 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
+ * SimpleJob 自动化配置
+ *
  * @author allen
  * @date 2020/5/30 16:58
  */
@@ -33,23 +35,29 @@ public class SimpleJobAutoConfig {
     private CoordinatorRegistryCenter zkCenter;
 
     @PostConstruct
-    public void initSimpleJob(){
+    public void initSimpleJob() {
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(ElasticSimpleJob.class);
-        for (Map.Entry<String,Object> entry :beans.entrySet()){
+        for (Map.Entry<String, Object> entry : beans.entrySet()) {
             Object instance = entry.getValue();
             Class<?>[] interfaces = instance.getClass().getInterfaces();
-            for (Class<?> superInterface:interfaces){
-                if (superInterface == SimpleJob.class){
+            for (Class<?> superInterface : interfaces) {
+                if (superInterface == SimpleJob.class) {
                     ElasticSimpleJob annotation = instance.getClass().getAnnotation(ElasticSimpleJob.class);
                     String jobName = annotation.jobName();
                     String cron = annotation.cron();
                     int shardingTotalCount = annotation.shardingTotalCount();
                     boolean overwrite = annotation.overwrite();
 
-                    JobCoreConfiguration coreConfiguration = JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount).build();
-                    JobTypeConfiguration typeConfiguration = new SimpleJobConfiguration(coreConfiguration,instance.getClass().getCanonicalName());
-                    LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(typeConfiguration).overwrite(overwrite).build();
-                    new JobScheduler(zkCenter,liteJobConfiguration).init();
+                    JobCoreConfiguration core =
+                            JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
+                                    .build();
+                    JobTypeConfiguration type =
+                            new SimpleJobConfiguration(core, instance.getClass().getCanonicalName());
+                    LiteJobConfiguration liteJob =
+                            LiteJobConfiguration.newBuilder(type)
+                                    .overwrite(overwrite)
+                                    .build();
+                    new JobScheduler(zkCenter, liteJob).init();
                 }
             }
         }

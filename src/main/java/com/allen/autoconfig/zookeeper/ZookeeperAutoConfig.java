@@ -19,13 +19,15 @@ import org.springframework.context.annotation.Configuration;
 public class ZookeeperAutoConfig {
 
     @Autowired
-    private ZookeeperProperties zookeeperProperties;
+    private ZookeeperProperties zkProperties;
 
     @Bean(initMethod = "init")
-    public CoordinatorRegistryCenter zkCent(){
-        ZookeeperConfiguration zookeeperConfiguration = new ZookeeperConfiguration(zookeeperProperties.getServerList(), zookeeperProperties.getNamespace());
-        ZookeeperRegistryCenter zookeeperRegistryCenter = new ZookeeperRegistryCenter(zookeeperConfiguration);
-        return zookeeperRegistryCenter;
+    public CoordinatorRegistryCenter zkCent() {
+        ZookeeperConfiguration zkConfiguration =
+                new ZookeeperConfiguration(zkProperties.getServerList(), zkProperties.getNamespace());
+        ZookeeperRegistryCenter zkRegistryCenter =
+                new ZookeeperRegistryCenter(zkConfiguration);
+        return zkRegistryCenter;
     }
 
 }
