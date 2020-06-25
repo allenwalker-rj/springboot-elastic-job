@@ -18,7 +18,8 @@ import lombok.extern.slf4j.Slf4j;
         cron = "0/10 * * * * ?",
         shardingTotalCount = 10,
         overwrite = true,
-        jobStrategy = ShardingStrategy.class
+        jobStrategy = ShardingStrategy.class,
+        openJobEvent = true
 )
 public class MyShardingStrategyJob implements SimpleJob {
 

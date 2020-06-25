@@ -28,6 +28,9 @@ public @interface ElasticSimpleJob {
 
     boolean overwrite() default false;
 
-    // 分片策略
+    // 使用自定义分片策略
     Class<?> jobStrategy() default AverageAllocationJobShardingStrategy.class;
+
+    // 是否开启时间追踪
+    boolean openJobEvent() default false;
 }

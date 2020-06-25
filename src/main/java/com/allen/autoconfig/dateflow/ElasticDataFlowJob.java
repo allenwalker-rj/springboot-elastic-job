@@ -32,4 +32,7 @@ public @interface ElasticDataFlowJob {
 
     // 分片策略
     Class<?> jobStrategy() default AverageAllocationJobShardingStrategy.class;
+
+    // 是否开启时间追踪
+    boolean openJobEvent() default false;
 }
