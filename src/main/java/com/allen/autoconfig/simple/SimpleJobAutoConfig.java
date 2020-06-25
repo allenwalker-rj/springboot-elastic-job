@@ -54,6 +54,9 @@ public class SimpleJobAutoConfig {
         String cron = annotation.cron();
         int shardingTotalCount = annotation.shardingTotalCount();
         boolean overwrite = annotation.overwrite();
+        // 获取分片策略
+        Class<?> jobStrategy = annotation.jobStrategy();
+
 
         // job核心配置
         JobCoreConfiguration core =
@@ -68,6 +71,8 @@ public class SimpleJobAutoConfig {
                 LiteJobConfiguration.newBuilder(type)
                         // 设置 overwrite 属性，是否支持刷新
                         .overwrite(overwrite)
+                        // 设置分片策略
+                        .jobShardingStrategyClass(jobStrategy.getCanonicalName())
                         .build();
 
         // 注册 jobSchedule

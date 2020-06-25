@@ -42,14 +42,14 @@ public class DateFlowJobAutoConfig {
             Class<?>[] interfaces = instance.getClass().getInterfaces();
             for (Class<?> superInterface : interfaces) {
                 if (superInterface == DataflowJob.class) {
-                   generateDateFlowJob(instance);
+                    generateDateFlowJob(instance);
                 }
             }
         }
 
     }
 
-    private void generateDateFlowJob(Object instance){
+    private void generateDateFlowJob(Object instance) {
         ElasticDataFlowJob annotation = instance.getClass().getAnnotation(ElasticDataFlowJob.class);
         String jobName = annotation.jobName();
         String cron = annotation.cron();
@@ -57,6 +57,9 @@ public class DateFlowJobAutoConfig {
         boolean overwrite = annotation.overwrite();
         // 流式处理开关
         boolean steamingProcess = annotation.steamingProcess();
+        // 获取分片策略
+        Class<?> jobStrategy = annotation.jobStrategy();
+
         // job核心配置
         JobCoreConfiguration core =
                 JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
@@ -70,6 +73,7 @@ public class DateFlowJobAutoConfig {
         LiteJobConfiguration liteJob =
                 LiteJobConfiguration.newBuilder(type)
                         .overwrite(overwrite)
+                        .jobShardingStrategyClass(jobStrategy.getCanonicalName())
                         .build();
 
         // 注册 jobSchedule

@@ -56,7 +56,7 @@ public class MyDataFlowJob implements DataflowJob<Integer> {
 
         try {
             TimeUnit.SECONDS.sleep(3);
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             // 测试使用，生产环境慎用
             e.printStackTrace();
 //            log.error("fetchData error",e);

@@ -1,5 +1,6 @@
 package com.allen.autoconfig.dateflow;
 
+import com.dangdang.ddframe.job.lite.api.strategy.impl.AverageAllocationJobShardingStrategy;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
@@ -19,9 +20,16 @@ import java.lang.annotation.Target;
 public @interface ElasticDataFlowJob {
 
     String jobName() default "";
+
     String cron() default "";
+
     int shardingTotalCount() default 1;
+
     boolean overwrite() default false;
+
     // 是否开启流式处理，默认关闭
     boolean steamingProcess() default false;
+
+    // 分片策略
+    Class<?> jobStrategy() default AverageAllocationJobShardingStrategy.class;
 }
