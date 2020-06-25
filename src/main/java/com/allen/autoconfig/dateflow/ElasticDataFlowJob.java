@@ -22,5 +22,6 @@ public @interface ElasticDataFlowJob {
     String cron() default "";
     int shardingTotalCount() default 1;
     boolean overwrite() default false;
+    // 是否开启流式处理，默认关闭
     boolean steamingProcess() default false;
 }

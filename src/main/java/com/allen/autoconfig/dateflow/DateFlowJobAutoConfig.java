@@ -35,32 +35,44 @@ public class DateFlowJobAutoConfig {
     private CoordinatorRegistryCenter zkCenter;
 
     @PostConstruct
-    public void initSimpleJob() {
+    public void initDateFlowJob() {
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(ElasticDataFlowJob.class);
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
             Object instance = entry.getValue();
             Class<?>[] interfaces = instance.getClass().getInterfaces();
             for (Class<?> superInterface : interfaces) {
                 if (superInterface == DataflowJob.class) {
-                    ElasticDataFlowJob annotation = instance.getClass().getAnnotation(ElasticDataFlowJob.class);
-                    String jobName = annotation.jobName();
-                    String cron = annotation.cron();
-                    int shardingTotalCount = annotation.shardingTotalCount();
-                    boolean overwrite = annotation.overwrite();
-                    boolean steamingProcess = annotation.steamingProcess();
-                    JobCoreConfiguration core =
-                            JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
-                                    .build();
-                    JobTypeConfiguration type =
-                            new DataflowJobConfiguration(core, instance.getClass().getCanonicalName(), steamingProcess);
-                    LiteJobConfiguration liteJob =
-                            LiteJobConfiguration.newBuilder(type)
-                                    .overwrite(overwrite)
-                                    .build();
-                    new JobScheduler(zkCenter, liteJob).init();
+                   generateDateFlowJob(instance);
                 }
             }
         }
 
+    }
+
+    private void generateDateFlowJob(Object instance){
+        ElasticDataFlowJob annotation = instance.getClass().getAnnotation(ElasticDataFlowJob.class);
+        String jobName = annotation.jobName();
+        String cron = annotation.cron();
+        int shardingTotalCount = annotation.shardingTotalCount();
+        boolean overwrite = annotation.overwrite();
+        // 流式处理开关
+        boolean steamingProcess = annotation.steamingProcess();
+        // job核心配置
+        JobCoreConfiguration core =
+                JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
+                        .build();
+
+        // job类型配置
+        JobTypeConfiguration type =
+                new DataflowJobConfiguration(core, instance.getClass().getCanonicalName(), steamingProcess);
+
+        // job根配置
+        LiteJobConfiguration liteJob =
+                LiteJobConfiguration.newBuilder(type)
+                        .overwrite(overwrite)
+                        .build();
+
+        // 注册 jobSchedule
+        new JobScheduler(zkCenter, liteJob).init();
     }
 }

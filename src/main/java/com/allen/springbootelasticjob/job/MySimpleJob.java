@@ -21,7 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 public class MySimpleJob implements SimpleJob {
     @Override
     public void execute(ShardingContext shardingContext) {
-        log.info("jobName:{} , shardingItem:{} , shardingTotal:{}",shardingContext.getJobName(),
-                shardingContext.getShardingItem(), shardingContext.getShardingTotalCount());
+        log.info("jobName:{} , shardingItem:{} , shardingTotal:{}",
+                // job名称
+                shardingContext.getJobName(),
+                // 当前分片
+                shardingContext.getShardingItem(),
+                // 分片总数
+                shardingContext.getShardingTotalCount());
     }
 }

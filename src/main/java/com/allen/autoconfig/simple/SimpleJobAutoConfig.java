@@ -42,25 +42,35 @@ public class SimpleJobAutoConfig {
             Class<?>[] interfaces = instance.getClass().getInterfaces();
             for (Class<?> superInterface : interfaces) {
                 if (superInterface == SimpleJob.class) {
-                    ElasticSimpleJob annotation = instance.getClass().getAnnotation(ElasticSimpleJob.class);
-                    String jobName = annotation.jobName();
-                    String cron = annotation.cron();
-                    int shardingTotalCount = annotation.shardingTotalCount();
-                    boolean overwrite = annotation.overwrite();
-
-                    JobCoreConfiguration core =
-                            JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
-                                    .build();
-                    JobTypeConfiguration type =
-                            new SimpleJobConfiguration(core, instance.getClass().getCanonicalName());
-                    LiteJobConfiguration liteJob =
-                            LiteJobConfiguration.newBuilder(type)
-                                    .overwrite(overwrite)
-                                    .build();
-                    new JobScheduler(zkCenter, liteJob).init();
+                    generateSimpleJob(instance);
                 }
             }
         }
+    }
 
+    private void generateSimpleJob(Object instance) {
+        ElasticSimpleJob annotation = instance.getClass().getAnnotation(ElasticSimpleJob.class);
+        String jobName = annotation.jobName();
+        String cron = annotation.cron();
+        int shardingTotalCount = annotation.shardingTotalCount();
+        boolean overwrite = annotation.overwrite();
+
+        // job核心配置
+        JobCoreConfiguration core =
+                JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
+                        .build();
+        // job类型配置
+        JobTypeConfiguration type =
+                new SimpleJobConfiguration(core, instance.getClass().getCanonicalName());
+
+        // job根配置
+        LiteJobConfiguration liteJob =
+                LiteJobConfiguration.newBuilder(type)
+                        // 设置 overwrite 属性，是否支持刷新
+                        .overwrite(overwrite)
+                        .build();
+
+        // 注册 jobSchedule
+        new JobScheduler(zkCenter, liteJob).init();
     }
 }
