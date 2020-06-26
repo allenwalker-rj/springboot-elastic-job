@@ -1,5 +1,7 @@
 package com.allen.autoconfig.simple;
 
+import com.dangdang.ddframe.job.lite.api.listener.ElasticJobListener;
+import com.dangdang.ddframe.job.lite.api.strategy.JobShardingStrategy;
 import com.dangdang.ddframe.job.lite.api.strategy.impl.AverageAllocationJobShardingStrategy;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +31,11 @@ public @interface ElasticSimpleJob {
     boolean overwrite() default false;
 
     // 使用自定义分片策略
-    Class<?> jobStrategy() default AverageAllocationJobShardingStrategy.class;
+    Class<? extends JobShardingStrategy> jobStrategy() default AverageAllocationJobShardingStrategy.class;
 
     // 是否开启时间追踪
     boolean openJobEvent() default false;
+
+    // 使用作业监听器（可以有多个作业监听的实现）
+    Class<? extends ElasticJobListener>[] jobListener() default {};
 }

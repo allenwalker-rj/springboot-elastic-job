@@ -1,4 +1,4 @@
-package com.allen.autoconfig.sharding;
+package com.allen.springbootelasticjob.sharding;
 
 import com.dangdang.ddframe.job.lite.api.strategy.JobInstance;
 import com.dangdang.ddframe.job.lite.api.strategy.JobShardingStrategy;

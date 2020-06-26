@@ -1,27 +1,29 @@
 package com.allen.springbootelasticjob.job;
 
-import com.allen.autoconfig.simple.ElasticSimpleJob;
+import com.allen.springbootelasticjob.listener.NormalListener;
 import com.allen.springbootelasticjob.sharding.ShardingStrategy;
+import com.allen.autoconfig.simple.ElasticSimpleJob;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * shardingStrategy 自定义分片策略的 Job
+ * NormalListener 实现普通作业监听
  *
  * @author allen
- * @date 2020/6/25 16:10
+ * @date 2020/6/26 22:28
  */
-@Slf4j
 @ElasticSimpleJob(
-        jobName = "myShardingStrategyJob",
+        jobName = "MyNormalListenerJob",
         cron = "0/10 * * * * ?",
         shardingTotalCount = 10,
         overwrite = true,
         jobStrategy = ShardingStrategy.class,
-        openJobEvent = false // 关闭事件追踪
+        openJobEvent = false,
+        jobListener = {NormalListener.class}
 )
-public class MyShardingStrategyJob implements SimpleJob {
+@Slf4j
+public class MyNormalListenerJob implements SimpleJob {
 
     @Override
     public void execute(ShardingContext shardingContext) {

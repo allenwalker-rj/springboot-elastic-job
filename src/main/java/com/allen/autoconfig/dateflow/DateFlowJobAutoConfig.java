@@ -8,8 +8,10 @@ import com.dangdang.ddframe.job.config.dataflow.DataflowJobConfiguration;
 import com.dangdang.ddframe.job.event.JobEventConfiguration;
 import com.dangdang.ddframe.job.event.rdb.JobEventRdbConfiguration;
 import com.dangdang.ddframe.job.lite.api.JobScheduler;
+import com.dangdang.ddframe.job.lite.api.listener.ElasticJobListener;
 import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
 import com.dangdang.ddframe.job.reg.base.CoordinatorRegistryCenter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -26,6 +28,7 @@ import java.util.Map;
  * @author allen
  * @date 2020/5/30 16:58
  */
+@Slf4j
 @Configuration
 @ConditionalOnBean(CoordinatorRegistryCenter.class)
 @AutoConfigureAfter(ZookeeperAutoConfig.class)
@@ -48,7 +51,7 @@ public class DateFlowJobAutoConfig {
             Class<?>[] interfaces = instance.getClass().getInterfaces();
             for (Class<?> superInterface : interfaces) {
                 if (superInterface == DataflowJob.class) {
-                    generateDateFlowJob(instance);
+                    this.generateDateFlowJob(instance);
                 }
             }
         }
@@ -67,6 +70,9 @@ public class DateFlowJobAutoConfig {
         Class<?> jobStrategy = annotation.jobStrategy();
         // 开启事件追踪
         boolean openJobEvent = annotation.openJobEvent();
+        // 获取作业监听器
+        Class<? extends ElasticJobListener>[] listeners = annotation.jobListener();
+        ElasticJobListener[] jobListeners = this.buildListener(listeners);
         // job核心配置
         JobCoreConfiguration core =
                 JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount)
@@ -88,5 +94,26 @@ public class DateFlowJobAutoConfig {
         }else {
             new JobScheduler(zkCenter, liteJob).init();
         }
+    }
+
+    private ElasticJobListener[] buildListener(Class<? extends ElasticJobListener>[] listeners) {
+        ElasticJobListener[] jobListeners = null;
+        int length = listeners.length;
+        if (length > 0) {
+            try {
+                jobListeners = new ElasticJobListener[length];
+                int index = 0;
+                for (Class<? extends ElasticJobListener> listener : listeners) {
+                    ElasticJobListener listenerInstance = listener.getDeclaredConstructor().newInstance();
+                    jobListeners[index] = listenerInstance;
+                    index++;
+                }
+            } catch (Exception e) {
+                log.error("[DateFlowJobAutoConfig]#generateSimpleJob error", e);
+            }
+        } else {
+            jobListeners = new ElasticJobListener[0];
+        }
+        return jobListeners;
     }
 }

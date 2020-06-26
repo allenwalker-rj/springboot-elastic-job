@@ -1,28 +1,26 @@
 package com.allen.springbootelasticjob.job;
 
-import com.allen.autoconfig.simple.ElasticSimpleJob;
-import com.allen.springbootelasticjob.sharding.ShardingStrategy;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * shardingStrategy 自定义分片策略的 Job
+ * DistributeListener 实现分布式监听器
  *
  * @author allen
- * @date 2020/6/25 16:10
+ * @date 2020/6/26 22:55
  */
+//@ElasticSimpleJob(
+//        jobName = "MyDistributeListenerJob",
+//        cron = "0/10 * * * * ?",
+//        shardingTotalCount = 10,
+//        overwrite = true,
+//        jobStrategy = ShardingStrategy.class,
+//        openJobEvent = false,
+//        jobListener = {DistributeListener.class}
+//)
 @Slf4j
-@ElasticSimpleJob(
-        jobName = "myShardingStrategyJob",
-        cron = "0/10 * * * * ?",
-        shardingTotalCount = 10,
-        overwrite = true,
-        jobStrategy = ShardingStrategy.class,
-        openJobEvent = false // 关闭事件追踪
-)
-public class MyShardingStrategyJob implements SimpleJob {
-
+public class MyDistributeListenerJob implements SimpleJob {
     @Override
     public void execute(ShardingContext shardingContext) {
         log.info("jobName:{} , shardingItem:{} , shardingTotal:{}",
