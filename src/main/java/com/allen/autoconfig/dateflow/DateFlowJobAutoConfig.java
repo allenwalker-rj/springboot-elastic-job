@@ -87,12 +87,12 @@ public class DateFlowJobAutoConfig {
                         .jobShardingStrategyClass(jobStrategy.getCanonicalName())
                         .build();
         // 根据是否开启事件追踪，使用不同的构造方法
-        if (openJobEvent){
+        if (openJobEvent) {
             JobEventConfiguration jec = new JobEventRdbConfiguration(dataSource);
             // 注册 jobSchedule
-            new JobScheduler(zkCenter, liteJob, jec).init();
-        }else {
-            new JobScheduler(zkCenter, liteJob).init();
+            new JobScheduler(zkCenter, liteJob, jec, jobListeners).init();
+        } else {
+            new JobScheduler(zkCenter, liteJob, jobListeners).init();
         }
     }
 
