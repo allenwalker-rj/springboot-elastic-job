@@ -93,8 +93,8 @@ spring.datasource.password=root
     * 分布式场景中，仅单一节点执行，整个任务只有一头一尾（谨慎使用）
 
 
-### version 1.0.4.1
+#### version 1.0.4.1
 1. 安全性问题修复：mysql-connector-java from 8.0.16 to 8.0.28
 
 
-#### 未完待续
+#### 随缘更新
