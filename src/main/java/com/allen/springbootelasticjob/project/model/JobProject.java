@@ -2,6 +2,10 @@ package com.allen.springbootelasticjob.project.model;
 
 import java.util.Date;
 
+/**
+ * @author allen
+ * @date 2022/9/10 13:28
+ */
 public class JobProject {
     /**
      *
